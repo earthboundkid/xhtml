@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/carlmjohnson/be"
-	"github.com/spotlightpa/almanack/internal/xhtml"
+	"github.com/earthboundkid/xhtml"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
@@ -34,11 +34,11 @@ func TestClone(t *testing.T) {
 		be.Equal(be.Relaxed(t), tc, s)
 
 		m := map[*html.Node]bool{}
-		for c := range xhtml.All(n) {
+		for c := range n.Descendants() {
 			m[c] = true
 		}
 
-		for c := range xhtml.All(n2) {
+		for c := range n2.Descendants() {
 			if m[c] {
 				t.Error("duplicate node:", n)
 			}

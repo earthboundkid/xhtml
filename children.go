@@ -1,26 +1,11 @@
 package xhtml
 
 import (
-	"iter"
 	"slices"
 	"strings"
 
 	"golang.org/x/net/html"
 )
-
-// ChildNodes returns a seq of the immediate children of n.
-func ChildNodes(n *html.Node) iter.Seq[*html.Node] {
-	return func(yield func(*html.Node) bool) {
-		if n == nil {
-			return
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			if !yield(c) {
-				return
-			}
-		}
-	}
-}
 
 func ReplaceWith(old, new *html.Node) {
 	old.Parent.InsertBefore(new, old)
@@ -78,7 +63,7 @@ func UnnestChildren(n *html.Node) {
 	if n.Parent == nil {
 		return
 	}
-	children := slices.Collect(ChildNodes(n))
+	children := slices.Collect(n.ChildNodes())
 	RemoveAll(children)
 	for _, c := range children {
 		n.Parent.InsertBefore(c, n)

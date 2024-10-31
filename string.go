@@ -36,7 +36,7 @@ func InnerHTML(n *html.Node) string {
 	var buf strings.Builder
 	buf.Grow(256)
 
-	for c := range ChildNodes(n) {
+	for c := range n.ChildNodes() {
 		if err := html.Render(&buf, c); err != nil {
 			panic(err)
 		}
@@ -54,7 +54,7 @@ func InnerHTMLBlocks(n *html.Node) string {
 	var buf strings.Builder
 	buf.Grow(256)
 
-	for c := range ChildNodes(n) {
+	for c := range n.ChildNodes() {
 		if err := html.Render(&buf, c); err != nil {
 			panic(err)
 		}
@@ -71,7 +71,7 @@ func TextContent(n *html.Node) string {
 	var buf strings.Builder
 	buf.Grow(256)
 
-	for n := range All(n) {
+	for n := range n.Descendants() {
 		if n.Type == html.TextNode {
 			buf.WriteString(n.Data)
 		}

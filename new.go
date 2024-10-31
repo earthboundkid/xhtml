@@ -47,7 +47,7 @@ func Clone(n *html.Node) *html.Node {
 		Namespace: n.Namespace,
 		Attr:      slices.Clone(n.Attr),
 	}
-	for c := range ChildNodes(n) {
+	for c := range n.ChildNodes() {
 		c2 := Clone(c)
 		new.AppendChild(c2)
 	}
