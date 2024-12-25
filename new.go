@@ -29,11 +29,19 @@ func New(tag string, attrs ...string) *html.Node {
 	}
 }
 
+// LastChildOrNew returns the last child of p
+// if it is [ShallowEqual] to a new *html.Node with tag and attrs.
+// Otherwise, it appends a new *html.Node with tag and attrs
+// and returns that.
+// For why this is operation useful,
+// see [Converting docx to clean HTML].
+//
+// [Converting docx to clean HTML]: https://mike.zwobble.org/2013/12/docx-to-clean-html-handling-the-xml-structure-mismatch/
 func LastChildOrNew(p *html.Node, tag string, attrs ...string) *html.Node {
-	if p.LastChild != nil && p.LastChild.Data == tag {
+	n := New(tag, attrs...)
+	if ShallowEqual(p.LastChild, n) {
 		return p.LastChild
 	}
-	n := New(tag, attrs...)
 	p.AppendChild(n)
 	return n
 }
