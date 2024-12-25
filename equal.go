@@ -1,6 +1,10 @@
 package xhtml
 
-import "golang.org/x/net/html"
+import (
+	"iter"
+
+	"golang.org/x/net/html"
+)
 
 // ShallowEqual returns true
 // if a and b have the same Type, DataAtom, Data, Namespace, and Attr.
@@ -23,4 +27,30 @@ func ShallowEqual(a, b *html.Node) bool {
 		}
 	}
 	return true
+}
+
+// DeepEqual returns true if a and b are [ShallowEqual]
+// and all of their descendants are ShallowEqual as well.
+func DeepEqual(a, b *html.Node) bool {
+	if !ShallowEqual(a, b) {
+		return false
+	}
+	aKids, stop := iter.Pull(a.Descendants())
+	defer stop()
+	bKids, stop := iter.Pull(b.Descendants())
+	defer stop()
+
+	for {
+		kidA, okA := aKids()
+		kidB, okB := bKids()
+		if okA != okB {
+			return false
+		}
+		if !okA {
+			return true
+		}
+		if !ShallowEqual(kidA, kidB) {
+			return false
+		}
+	}
 }
