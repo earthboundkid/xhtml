@@ -11,7 +11,7 @@ func Attr(n *html.Node, name string) string {
 		return ""
 	}
 	for _, attr := range n.Attr {
-		if attr.Key == name {
+		if attr.Key == name && attr.Namespace == "" {
 			return attr.Val
 		}
 	}
@@ -21,7 +21,7 @@ func Attr(n *html.Node, name string) string {
 func SetAttr(n *html.Node, key, value string) {
 	for i := range n.Attr {
 		attr := &n.Attr[i]
-		if attr.Key == key {
+		if attr.Key == key && attr.Namespace == "" {
 			attr.Val = value
 			return
 		}
@@ -34,6 +34,6 @@ func SetAttr(n *html.Node, key, value string) {
 
 func DeleteAttr(n *html.Node, key string) {
 	n.Attr = slices.DeleteFunc(n.Attr, func(a html.Attribute) bool {
-		return a.Key == key
+		return a.Key == key && a.Namespace == ""
 	})
 }
