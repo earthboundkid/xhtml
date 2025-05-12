@@ -1,8 +1,6 @@
-github.com/carlmjohnson/be v0.23.2 h1:1QjPnPJhwGUjsD9+7h98EQlKsxnG5TV+nnEvk0wnkls=
-github.com/carlmjohnson/be v0.23.2/go.mod h1:KAgPUh0HpzWYZZI+IABdo80wTgY43YhbdsiLYAaSI/Q=
+github.com/carlmjohnson/be v0.24.1 h1:QNG+beMZHF6AZsElCrf7S4fVGa0EDtQGkXQiBFPuDZc=
+github.com/carlmjohnson/be v0.24.1/go.mod h1:KAgPUh0HpzWYZZI+IABdo80wTgY43YhbdsiLYAaSI/Q=
 github.com/earthboundkid/deque/v2 v2.24.2 h1:U0vh6utzBx922tezr53ryt2tOIJ1GUKMABmYpxCgV48=
 github.com/earthboundkid/deque/v2 v2.24.2/go.mod h1:k/HnjdCUwuMdqNzbS2exS37GEXJBzHSpNBVppL/nEHg=
-golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
-golang.org/x/net v0.30.0/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
-golang.org/x/net v0.30.1-0.20241029041316-511cc3a40645 h1:PkUAZhY7DE0UIyC/L4hQSVdhcrvO1A+8khEAI7JbHRg=
-golang.org/x/net v0.30.1-0.20241029041316-511cc3a40645/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
+golang.org/x/net v0.40.0 h1:79Xs7wF06Gbdcg4kdCCIQArK11Z1hr5POQ6+fIYHNuY=
+golang.org/x/net v0.40.0/go.mod h1:y0hY0exeL2Pku80/zKK7tpntoX23cqL3Oa6njdgRtds=
