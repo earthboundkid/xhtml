@@ -7,11 +7,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+// ReplaceWith removes old from its Parent and inserts new in its place.
 func ReplaceWith(old, new *html.Node) {
 	old.Parent.InsertBefore(new, old)
 	old.Parent.RemoveChild(old)
 }
 
+// AdoptChildren removes all of the children of src and makes them the children of dst.
 func AdoptChildren(dst, src *html.Node) {
 	if dst == src {
 		return
@@ -23,6 +25,7 @@ func AdoptChildren(dst, src *html.Node) {
 	}
 }
 
+// AppendText adds an html.TextNode with the specified text as a child of n.
 func AppendText(n *html.Node, text string) {
 	n.AppendChild(&html.Node{
 		Type: html.TextNode,

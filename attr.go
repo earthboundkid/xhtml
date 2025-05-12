@@ -6,6 +6,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Attr returns the value of the first attribute of n with the named key.
 func Attr(n *html.Node, name string) string {
 	if n == nil {
 		return ""
@@ -18,6 +19,7 @@ func Attr(n *html.Node, name string) string {
 	return ""
 }
 
+// SetAttr adds or replaces the give attribute key and value on n.
 func SetAttr(n *html.Node, key, value string) {
 	for i := range n.Attr {
 		attr := &n.Attr[i]
@@ -32,6 +34,7 @@ func SetAttr(n *html.Node, key, value string) {
 	})
 }
 
+// DeleteAttr removes any attributes of n with the named key.
 func DeleteAttr(n *html.Node, key string) {
 	n.Attr = slices.DeleteFunc(n.Attr, func(a html.Attribute) bool {
 		return a.Key == key && a.Namespace == ""
