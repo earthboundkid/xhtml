@@ -7,6 +7,9 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+// New creates a new [html.Node] with the specified tag and attributes.
+// It handles properly setting the Node.Type and Node.DataAtom.
+// New panics if the length of attrs is not even.
 func New(tag string, attrs ...string) *html.Node {
 	var attrslice []html.Attribute
 	if len(attrs) > 0 {
