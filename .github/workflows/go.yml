@@ -1,5 +1,5 @@
 name: Go
-on: [push]
+on: [push, pull_request]
 jobs:
   build:
     name: Build
@@ -11,6 +11,10 @@ jobs:
           go-version: "stable"
       - name: Download modules
         run: go mod download
-
+      - name: Check go.mod
+        run: go mod tidy -diff
       - name: Test
-        run: go test -v -race ./...
+        run: go test -race -v -coverprofile=profile.cov ./...
+      - uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
