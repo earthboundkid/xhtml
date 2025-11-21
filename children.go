@@ -33,6 +33,8 @@ func AppendText(n *html.Node, text string) {
 	})
 }
 
+// SetInnerHTML parses s in the context of n
+// and makes the resulting Nodes the sole children of n.
 func SetInnerHTML(n *html.Node, s string) error {
 	children, err := html.ParseFragment(strings.NewReader(s), n)
 	if err != nil {
