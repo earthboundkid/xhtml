@@ -71,3 +71,22 @@ func WithDataset(attr string) Selector {
 		return Attr(n, attr) != ""
 	}
 }
+
+// DescendantsDepth is like html.Node.Descendants(),
+// except it also yields the depth of each node relative to its parent.
+func DescendantsDepth(n *html.Node) iter.Seq2[int, *html.Node] {
+	_ = n.FirstChild // eager nil check
+
+	return func(yield func(int, *html.Node) bool) {
+		descendants(1, n, yield)
+	}
+}
+
+func descendants(depth int, n *html.Node, yield func(int, *html.Node) bool) bool {
+	for c := range n.ChildNodes() {
+		if !yield(depth, c) || !descendants(depth+1, c, yield) {
+			return false
+		}
+	}
+	return true
+}

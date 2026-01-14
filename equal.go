@@ -2,6 +2,7 @@ package xhtml
 
 import (
 	"iter"
+	"slices"
 
 	"golang.org/x/net/html"
 )
@@ -21,10 +22,8 @@ func ShallowEqual(a, b *html.Node) bool {
 		a.Data != b.Data {
 		return false
 	}
-	for i := range a.Attr {
-		if a.Attr[i] != b.Attr[i] {
-			return false
-		}
+	if !slices.Equal(a.Attr, b.Attr) {
+		return false
 	}
 	return true
 }
@@ -35,15 +34,18 @@ func DeepEqual(a, b *html.Node) bool {
 	if !ShallowEqual(a, b) {
 		return false
 	}
-	aKids, stop := iter.Pull(a.Descendants())
+	aKids, stop := iter.Pull2(DescendantsDepth(a))
 	defer stop()
-	bKids, stop := iter.Pull(b.Descendants())
+	bKids, stop := iter.Pull2(DescendantsDepth(b))
 	defer stop()
 
 	for {
-		kidA, okA := aKids()
-		kidB, okB := bKids()
+		depthA, kidA, okA := aKids()
+		depthB, kidB, okB := bKids()
 		if okA != okB {
+			return false
+		}
+		if depthA != depthB {
 			return false
 		}
 		if !okA {
