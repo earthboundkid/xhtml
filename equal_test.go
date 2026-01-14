@@ -27,6 +27,11 @@ func TestDeepEqual(t *testing.T) {
 			`<h1><a href="http://example.com/">link</a></h1><div>boo</div>`,
 			false,
 		},
+		{
+			"<div><span></span><span>a</span></div>",
+			"<div><span><span>a</span></span></div>",
+			false,
+		},
 	}
 	for _, tc := range cases {
 		a, err := html.Parse(strings.NewReader(tc.a))

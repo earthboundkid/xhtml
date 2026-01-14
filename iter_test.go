@@ -45,3 +45,49 @@ func ExampleClosest() {
 	// Output:
 	// abc123
 }
+
+func ExampleDescendantsDepth() {
+	{
+		s := "<div><span></span><span>a</span></div>"
+		fmt.Printf("DescendantsDepth(%q)\n", s)
+		doc, err := html.Parse(strings.NewReader(s))
+		if err != nil {
+			panic(err)
+		}
+		body := doc.FirstChild.FirstChild.NextSibling
+		for depth, n := range xhtml.DescendantsDepth(body) {
+			ntype := "element"
+			if n.Type != html.ElementNode {
+				ntype = "text"
+			}
+			fmt.Println("depth:", depth, "type:", ntype, "data:", n.Data)
+		}
+	}
+	{
+		s := "<div><span><span>a</span></span></div>"
+		fmt.Printf("DescendantsDepth(%q)\n", s)
+		doc, err := html.Parse(strings.NewReader(s))
+		if err != nil {
+			panic(err)
+		}
+		body := doc.FirstChild.FirstChild.NextSibling
+		for depth, n := range xhtml.DescendantsDepth(body) {
+			ntype := "element"
+			if n.Type != html.ElementNode {
+				ntype = "text"
+			}
+			fmt.Println("depth:", depth, "type:", ntype, "data:", n.Data)
+		}
+	}
+	// Output:
+	// DescendantsDepth("<div><span></span><span>a</span></div>")
+	// depth: 1 type: element data: div
+	// depth: 2 type: element data: span
+	// depth: 2 type: element data: span
+	// depth: 3 type: text data: a
+	// DescendantsDepth("<div><span><span>a</span></span></div>")
+	// depth: 1 type: element data: div
+	// depth: 2 type: element data: span
+	// depth: 3 type: element data: span
+	// depth: 4 type: text data: a
+}
