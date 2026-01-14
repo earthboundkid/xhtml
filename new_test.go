@@ -3,6 +3,7 @@ package xhtml_test
 import (
 	"strings"
 	"testing"
+	"unsafe"
 
 	"github.com/carlmjohnson/be"
 	"github.com/earthboundkid/xhtml"
@@ -45,4 +46,11 @@ func TestClone(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestNew_memory(t *testing.T) {
+	s := "division"
+	n1 := xhtml.New(s[:3])
+	n2 := xhtml.New("div")
+	be.Equal(t, unsafe.StringData(n1.Data), unsafe.StringData(n2.Data))
 }

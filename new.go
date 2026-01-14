@@ -24,10 +24,15 @@ func New(tag string, attrs ...string) *html.Node {
 			}
 		}
 	}
+	dataAtom := atom.Lookup([]byte(tag))
+	// Consolidate memory usage if possible
+	if dataAtom != 0 {
+		tag = dataAtom.String()
+	}
 	return &html.Node{
 		Type:     html.ElementNode,
 		Data:     tag,
-		DataAtom: atom.Lookup([]byte(tag)),
+		DataAtom: dataAtom,
 		Attr:     attrslice,
 	}
 }
