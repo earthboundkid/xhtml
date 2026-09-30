@@ -5,7 +5,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/carlmjohnson/be"
+	"github.com/earthboundkid/assert"
 	"github.com/earthboundkid/xhtml"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -18,33 +18,34 @@ func TestClone(t *testing.T) {
 		`<h1><a href="http://example.com">link</a></h1><div>boo</div>`,
 	}
 	for _, tc := range cases {
-		n, err := html.Parse(strings.NewReader(tc))
-		be.NilErr(t, err)
-		body := n.FirstChild.FirstChild.NextSibling
-		be.Equal(t, xhtml.Select(n, xhtml.WithAtom(atom.Body)), body)
+		assert.FailsNow(t).Run(tc, func(be assert.TB) {
+			n := be.OK(html.Parse(strings.NewReader(tc)))
+			body := n.FirstChild.FirstChild.NextSibling
+			be.Equal(xhtml.Select(n, xhtml.WithAtom(atom.Body)), body)
 
-		s := xhtml.InnerHTML(body)
-		be.Equal(be.Relaxed(t), tc, s)
+			s := xhtml.InnerHTML(body)
+			be.Equal(tc, s)
 
-		n2 := xhtml.Clone(n)
-		body2 := n2.FirstChild.FirstChild.NextSibling
-		be.Equal(t, xhtml.Select(n2, xhtml.WithAtom(atom.Body)), body2)
-		be.Unequal(t, body, body2)
-		be.True(t, xhtml.DeepEqual(body, body2))
+			n2 := xhtml.Clone(n)
+			body2 := n2.FirstChild.FirstChild.NextSibling
+			be.Equal(xhtml.Select(n2, xhtml.WithAtom(atom.Body)), body2)
+			be.NotEqual(body, body2)
+			be.True(xhtml.DeepEqual(body, body2))
 
-		s = xhtml.InnerHTML(body2)
-		be.Equal(be.Relaxed(t), tc, s)
+			s = xhtml.InnerHTML(body2)
+			be.Equal(tc, s)
 
-		m := map[*html.Node]bool{}
-		for c := range n.Descendants() {
-			m[c] = true
-		}
-
-		for c := range n2.Descendants() {
-			if m[c] {
-				t.Error("duplicate node:", n)
+			m := map[*html.Node]bool{}
+			for c := range n.Descendants() {
+				m[c] = true
 			}
-		}
+
+			for c := range n2.Descendants() {
+				if m[c] {
+					be.Error("duplicate node:", n)
+				}
+			}
+		})
 	}
 }
 
@@ -52,5 +53,6 @@ func TestNew_memory(t *testing.T) {
 	s := "division"
 	n1 := xhtml.New(s[:3])
 	n2 := xhtml.New("div")
-	be.Equal(t, unsafe.StringData(n1.Data), unsafe.StringData(n2.Data))
+	assert.FailsNow(t).
+		Equal(unsafe.StringData(n1.Data), unsafe.StringData(n2.Data))
 }

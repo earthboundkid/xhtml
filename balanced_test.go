@@ -3,7 +3,7 @@ package xhtml_test
 import (
 	"testing"
 
-	"github.com/carlmjohnson/be"
+	"github.com/earthboundkid/assert"
 	"github.com/earthboundkid/xhtml"
 )
 
@@ -22,8 +22,8 @@ func TestIsBalanced(t *testing.T) {
 		{"<a><b><c></b></c></a>", false},
 	}
 	for _, testcase := range tcs {
-		t.Run(testcase.string, func(t *testing.T) {
-			be.Equal(t, testcase.bool, xhtml.IsBalanced(testcase.string))
+		assert.FailsNow(t).Run(testcase.string, func(be assert.TB) {
+			be.Equal(xhtml.IsBalanced(testcase.string), testcase.bool)
 		})
 	}
 }
