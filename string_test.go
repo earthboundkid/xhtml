@@ -4,13 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/carlmjohnson/be"
+	"github.com/earthboundkid/assert"
 	"github.com/earthboundkid/xhtml"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
 func TestInnerText(t *testing.T) {
+	be := assert.FailsNow(t)
 	for _, tc := range []struct {
 		input, want string
 	}{
@@ -20,10 +21,9 @@ func TestInnerText(t *testing.T) {
 			`<div class="flourish-embed flourish-cards" data-src="visualisation/14836391"><script src="https://public.flourish.studio/resources/embed.js"></script></div>`,
 		},
 	} {
-		doc, err := html.Parse(strings.NewReader(tc.input))
-		be.NilErr(t, err)
+		doc := be.OK(html.Parse(strings.NewReader(tc.input)))
 		p := xhtml.Select(doc, xhtml.WithAtom(atom.P))
 		got := xhtml.TextContent(p)
-		be.Equal(t, tc.want, got)
+		be.Equal(got, tc.want)
 	}
 }

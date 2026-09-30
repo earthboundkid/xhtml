@@ -4,12 +4,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/carlmjohnson/be"
+	"github.com/earthboundkid/assert"
 	"github.com/earthboundkid/xhtml"
 	"golang.org/x/net/html"
 )
 
 func TestDeepEqual(t *testing.T) {
+	be := assert.FailsNow(t)
 	cases := []struct {
 		a, b  string
 		equal bool
@@ -34,10 +35,8 @@ func TestDeepEqual(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		a, err := html.Parse(strings.NewReader(tc.a))
-		be.NilErr(t, err)
-		b, err := html.Parse(strings.NewReader(tc.b))
-		be.NilErr(t, err)
-		be.Equal(t, tc.equal, xhtml.DeepEqual(a, b))
+		a := be.OK(html.Parse(strings.NewReader(tc.a)))
+		b := be.OK(html.Parse(strings.NewReader(tc.b)))
+		be.Equal(xhtml.DeepEqual(a, b), tc.equal)
 	}
 }

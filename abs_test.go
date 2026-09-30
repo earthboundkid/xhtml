@@ -4,12 +4,12 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/carlmjohnson/be"
+	"github.com/earthboundkid/assert"
 	"github.com/earthboundkid/xhtml"
 )
 
 func TestAbsolutizeURL(t *testing.T) {
-	testcaes := []struct {
+	testcases := []struct {
 		in, out string
 	}{
 		{``, ``},
@@ -40,10 +40,11 @@ func TestAbsolutizeURL(t *testing.T) {
 		},
 	}
 	u, _ := url.Parse("http://example.com/1/")
-	for _, tc := range testcaes {
+	for _, tc := range testcases {
+		be := assert.FailsNow(t)
 		n := xhtml.New("div")
-		be.NilErr(t, xhtml.SetInnerHTML(n, tc.in))
+		be.NilError(xhtml.SetInnerHTML(n, tc.in))
 		xhtml.AbsolutizeURLs(n, u)
-		be.Equal(t, tc.out, xhtml.InnerHTML(n))
+		be.Equal(xhtml.InnerHTML(n), tc.out)
 	}
 }
