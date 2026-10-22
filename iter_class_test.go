@@ -1,5 +1,3 @@
-//go:build go1.24
-
 package xhtml_test
 
 import (
