@@ -56,20 +56,32 @@ func WithAtom(a atom.Atom) Selector {
 	}
 }
 
+// WithAttr returns a Selector that matches html.Nodes with the given attribute key and value.
+func WithAttr(key, value string) Selector {
+	return func(n *html.Node) bool {
+		return Attr(n, key) == value
+	}
+}
+
+// WithAttrKey returns a Selector that matches html.Nodes with the given attribute key.
+// It matches even if the value is empty.
+func WithAttrKey(attr string) Selector {
+	return func(n *html.Node) bool {
+		return slices.ContainsFunc(n.Attr, func(a html.Attribute) bool {
+			return a.Key == attr
+		})
+	}
+}
+
 // WithID returns a Selector that matches html.Nodes with the given id= attribute.
 func WithID(id string) Selector {
-	return func(n *html.Node) bool {
-		return Attr(n, "id") == id
-	}
+	return WithAttr("id", id)
 }
 
 // WithDataset returns a Selector that matches html.Nodes with the given data attribute set.
 // The attribute should be in kebab-case, not camelCase, without the "data-" prefix.
 func WithDataset(attr string) Selector {
-	attr = "data-" + attr
-	return func(n *html.Node) bool {
-		return Attr(n, attr) != ""
-	}
+	return WithAttrKey("data-" + attr)
 }
 
 // DescendantsDepth is like html.Node.Descendants(),
