@@ -3,6 +3,7 @@ package xhtml
 
 import (
 	"iter"
+	"regexp"
 	"slices"
 
 	"golang.org/x/net/html"
@@ -10,7 +11,21 @@ import (
 )
 
 // Selector is a function that matches html.Nodes.
-type Selector = func(n *html.Node) bool
+type Selector func(n *html.Node) bool
+
+// And composes two selectors together with &&.
+func (s Selector) And(other Selector) Selector {
+	return func(n *html.Node) bool {
+		return s(n) && other(n)
+	}
+}
+
+// Or composes two selectors together with ||.
+func (s Selector) Or(other Selector) Selector {
+	return func(n *html.Node) bool {
+		return s(n) || other(n)
+	}
+}
 
 // SelectAll returns an iterator yielding matching nodes in n.Descendants().
 func SelectAll(n *html.Node, match Selector) iter.Seq[*html.Node] {
@@ -70,6 +85,18 @@ func WithAttrKey(attr string) Selector {
 		return slices.ContainsFunc(n.Attr, func(a html.Attribute) bool {
 			return a.Key == attr
 		})
+	}
+}
+
+// WithAttrMatch returns a Selector
+// that matches html.Nodes where the given attribute key's value
+// matches the provided regex pattern.
+//
+// WithAttrMatch panics if the pattern does not compile.
+func WithAttrMatch(key, pattern string) Selector {
+	re := regexp.MustCompile(pattern)
+	return func(n *html.Node) bool {
+		return re.MatchString(Attr(n, key))
 	}
 }
 
