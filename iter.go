@@ -13,17 +13,24 @@ import (
 // Selector is a function that matches html.Nodes.
 type Selector func(n *html.Node) bool
 
-// And composes two selectors together with &&.
+// And composes two Selectors together with &&.
 func (s Selector) And(other Selector) Selector {
 	return func(n *html.Node) bool {
 		return s(n) && other(n)
 	}
 }
 
-// Or composes two selectors together with ||.
+// Or composes two Selectors together with ||.
 func (s Selector) Or(other Selector) Selector {
 	return func(n *html.Node) bool {
 		return s(n) || other(n)
+	}
+}
+
+// Not returns a Selector that returns its opposite.
+func (s Selector) Not() Selector {
+	return func(n *html.Node) bool {
+		return !s(n)
 	}
 }
 
@@ -62,6 +69,13 @@ func Closest(n *html.Node, match Selector) *html.Node {
 		}
 	}
 	return nil
+}
+
+// WithType returns a Selector that matches html.Nodes with the given [html.NodeType].
+func WithType(nt html.NodeType) Selector {
+	return func(n *html.Node) bool {
+		return n.Type == nt
+	}
 }
 
 // WithAtom returns a Selector that matches html.Nodes with the given [atom.Atom].

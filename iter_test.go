@@ -9,64 +9,86 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-func ExampleSelectAll() {
-	{
-		doc, err := html.Parse(strings.NewReader(`
-			<ul>
-				<li><a href="https://example.com/en-us">Hello, World!</a></li>
-				<li><a href="https://example.com/ja-jp">こんにちは世界！</a></li>
-			</ul>`))
-		if err != nil {
-			panic(err)
-		}
-		// Find all a[href] in a document
-		// And print the link URL and text
-		for link := range xhtml.SelectAll(doc,
-			xhtml.WithAtom(atom.A).And(xhtml.WithAttrKey("href"))) {
-			fmt.Println(xhtml.Attr(link, "href"), xhtml.TextContent(link))
-		}
+func ExampleSelectAll_links() {
+	doc, err := html.Parse(strings.NewReader(`
+		<ul>
+			<li><a href="https://example.com/en-us">Hello, World!</a></li>
+			<li><a href="https://example.com/ja-jp">こんにちは世界！</a></li>
+		</ul>`))
+	if err != nil {
+		panic(err)
 	}
-	{
-		doc, err := html.Parse(strings.NewReader(`
-			<ul>
-				<li><a href="https://example.com/a/something">Link A</a></li>
-				<li><a href="https://example.com/b/something-else">Link B</a></li>
-			</ul>
-		`))
-		if err != nil {
-			panic(err)
-		}
-
-		// Find all a[href^=https://example.com/a] in a document
-		// And print the link URL and text
-		for link := range xhtml.SelectAll(doc,
-			xhtml.WithAtom(atom.A).And(xhtml.WithAttrMatch("href", `^https://example.com/a`))) {
-			fmt.Println(xhtml.Attr(link, "href"), xhtml.TextContent(link))
-		}
-
-	}
-	{
-		doc, err := html.Parse(strings.NewReader(`
-			<em class="italic text-xl">Sign up</em>
-			<strong class="bold text-2xl">today</strong>
-			<span>for up to</span>
-			<strong class="text-xl bold">50% off</strong>`))
-		if err != nil {
-			panic(err)
-		}
-		// Find all em or strong with class text-xl in a document
-		// And print the text
-		for tag := range xhtml.SelectAll(doc,
-			xhtml.WithAtom(atom.Em).Or(xhtml.WithAtom(atom.Strong)).And(xhtml.WithClass("text-xl"))) {
-			fmt.Println(xhtml.TextContent(tag))
-		}
+	// Find all a[href] in a document
+	// And print the link URL and text
+	for link := range xhtml.SelectAll(doc,
+		xhtml.WithAtom(atom.A).And(xhtml.WithAttrKey("href"))) {
+		fmt.Println(xhtml.Attr(link, "href"), xhtml.TextContent(link))
 	}
 	// Output:
 	// https://example.com/en-us Hello, World!
 	// https://example.com/ja-jp こんにちは世界！
+}
+
+func ExampleSelectAll_withAttrMatch() {
+	doc, err := html.Parse(strings.NewReader(`
+		<ul>
+			<li><a href="https://example.com/a/something">Link A</a></li>
+			<li><a href="https://example.com/b/something-else">Link B</a></li>
+		</ul>
+	`))
+	if err != nil {
+		panic(err)
+	}
+
+	// Find all a[href^=https://example.com/a] in a document
+	// And print the link URL and text
+	for link := range xhtml.SelectAll(doc,
+		xhtml.WithAtom(atom.A).And(xhtml.WithAttrMatch("href", `^https://example.com/a`))) {
+		fmt.Println(xhtml.Attr(link, "href"), xhtml.TextContent(link))
+	}
+	// Output:
 	// https://example.com/a/something Link A
+}
+
+func ExampleSelectAll_class() {
+	doc, err := html.Parse(strings.NewReader(`
+			<em class="italic text-xl">Sign up</em>
+			<strong class="bold text-2xl">today</strong>
+			<span>for up to</span>
+			<strong class="text-xl bold">50% off</strong>`))
+	if err != nil {
+		panic(err)
+	}
+	// Find all em or strong with class text-xl in a document
+	// And print the text
+	for tag := range xhtml.SelectAll(doc,
+		xhtml.WithAtom(atom.Em).Or(xhtml.WithAtom(atom.Strong)).And(xhtml.WithClass("text-xl"))) {
+		fmt.Println(xhtml.TextContent(tag))
+	}
+	// Output:
 	// Sign up
 	// 50% off
+}
+
+func ExampleSelectAll_not() {
+	doc, err := html.Parse(strings.NewReader(`
+		<!doctype html>
+		<p>
+			This is
+			<!-- a comment -->
+			<em>some text</em>!
+		</p>`))
+	if err != nil {
+		panic(err)
+	}
+	// Return all the nodes that aren't elements or text.
+	for n := range xhtml.SelectAll(doc,
+		xhtml.WithType(html.ElementNode).Or(xhtml.WithType(html.TextNode)).Not()) {
+		fmt.Println(n.Type, "-", n.Data)
+	}
+	// Output:
+	// DoctypeNode - html
+	// CommentNode -  a comment
 }
 
 func ExampleClosest() {
